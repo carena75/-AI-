@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>캐릭터 시트 스튜디오 · 성인 전용 세이프 빌드</title>
+<style>
+  :root{
+    --bg:#f8fafc; --card:#ffffff; --border:#e2e8f0; --text:#1e293b; --text2:#64748b;
+    --accent:#4f46e5; --accent-soft:#eef2ff; --purple:#7c3aed; --green:#16a34a;
+    --red:#dc2626; --red-soft:#fef2f2; --radius:14px; --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;}
+  body{background:var(--bg); color:var(--text); padding:24px; line-height:1.5;}
+  .wrap{max-width:1560px; margin:0 auto;}
+
+  /* header */
+  .eyebrow{font-size:.78rem; font-weight:800; letter-spacing:.06em; color:var(--accent); margin-bottom:6px;}
+  h1{font-size:1.9rem; font-weight:800; margin-bottom:8px;}
+  h1 .ver{font-size:1.1rem; color:var(--purple);}
+  .sub{color:var(--text2); font-size:.95rem; max-width:900px; margin-bottom:14px;}
+  .safe-badge{display:inline-flex; align-items:center; gap:8px; background:#ecfdf5; color:#047857; border:1px solid #a7f3d0; font-weight:700; font-size:.85rem; padding:8px 14px; border-radius:999px; margin-bottom:22px;}
+
+  /* mode cards */
+  .modes{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:18px;}
+  .mode-card{background:var(--card); border:2px solid var(--border); border-radius:var(--radius); padding:18px 20px; cursor:pointer; transition:.15s; text-align:left;}
+  .mode-card:hover{border-color:#c7d2fe;}
+  .mode-card.active{border-color:var(--purple); background:#faf5ff; box-shadow:0 4px 14px rgba(124,58,237,.12);}
+  .mode-card h3{font-size:1.02rem; font-weight:800; margin-bottom:4px;}
+  .mode-card p{font-size:.82rem; color:var(--text2);}
+
+  /* step tabs */
+  .steps{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px;}
+  .step-btn{background:var(--card); border:1px solid var(--border); border-radius:999px; padding:9px 16px; font-size:.85rem; font-weight:700; color:var(--text2); cursor:pointer; transition:.15s;}
+  .step-btn:hover{border-color:var(--accent);}
+  .step-btn.active{background:var(--accent); border-color:var(--accent); color:#fff;}
+
+  /* banner */
+  .banner{display:none; align-items:flex-start; gap:10px; background:var(--red-soft); border:1px solid #fecaca; color:#991b1b; padding:12px 16px; border-radius:12px; font-size:.85rem; font-weight:600; margin-bottom:16px;}
+  .banner.show{display:flex;}
+
+  /* layout */
+  .layout{display:grid; grid-template-columns:1fr 1fr; gap:20px; align-items:start;}
+  @media (max-width:1080px){ .layout{grid-template-columns:1fr;} .modes{grid-template-columns:1fr;} }
+
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:18px; padding:22px; box-shadow:0 10px 30px rgba(15,23,42,.04);}
+  .left-panel{max-height:calc(100vh - 40px); overflow-y:auto; position:sticky; top:24px;}
+  .right-panel{max-height:calc(100vh - 40px); overflow-y:auto; position:sticky; top:24px;}
+
+  section.step-section{margin-bottom:28px; padding-bottom:20px; border-bottom:1px dashed var(--border); scroll-margin-top:20px;}
+  section.step-section:last-child{border-bottom:none;}
+  .section-head{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:14px;}
+  .section-head h2{font-size:1.05rem; font-weight:800;}
+  .section-head span{font-size:.72rem; color:var(--text2); font-weight:700;}
+
+  .field{margin-bottom:14px;}
+  .field label{display:block; font-size:.8rem; font-weight:700; color:var(--text2); margin-bottom:6px;}
+  .field .hint{font-size:.72rem; color:#94a3b8; font-weight:500; margin-top:4px;}
+  .row2{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  input[type=text], input[type=number], textarea, select{
+    width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:10px; font-size:.88rem; color:var(--text); background:#fff;
+  }
+  input:focus, textarea:focus, select:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft);}
+  textarea{min-height:64px; resize:vertical; font-family:inherit;}
+  input.invalid, textarea.invalid{border-color:var(--red); background:var(--red-soft);}
+
+  .mode-pane{display:none;}
+  .mode-pane.active{display:block;}
+
+  .look-card{border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:14px; background:#fbfbfe;}
+  .look-card-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;}
+  .look-card-head b{font-size:.85rem;}
+  .btn-mini{border:1px solid var(--border); background:#fff; border-radius:8px; padding:4px 10px; font-size:.72rem; font-weight:700; cursor:pointer; color:var(--text2);}
+  .btn-mini:hover{border-color:var(--red); color:var(--red);}
+  .add-look{width:100%; border:1.5px dashed #c7d2fe; background:var(--accent-soft); color:var(--accent); font-weight:700; font-size:.85rem; padding:10px; border-radius:10px; cursor:pointer;}
+
+  .locked-note{background:#fff7ed; border:1px solid #fed7aa; color:#9a3412; font-size:.76rem; font-weight:600; padding:8px 10px; border-radius:8px; margin-bottom:10px;}
+
+  .upload-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .upload-slot{border:1px dashed var(--border); border-radius:10px; padding:10px; font-size:.78rem;}
+  .upload-slot label{display:block; font-weight:700; margin-bottom:6px; color:var(--text);}
+  .upload-slot input[type=file]{font-size:.72rem;}
+  .upload-slot .status{font-size:.7rem; margin-top:6px; color:var(--text2);}
+  .upload-slot.done{border-color:#86efac; background:#f0fdf4;}
+
+  .master-list{display:flex; flex-direction:column; gap:8px;}
+  .master-opt{display:flex; align-items:center; gap:8px; font-size:.82rem; border:1px solid var(--border); border-radius:8px; padding:8px 10px;}
+
+  .btn{border:none; border-radius:10px; padding:10px 16px; font-size:.82rem; font-weight:700; cursor:pointer; transition:.15s;}
+  .btn-outline{background:#fff; border:1px solid var(--border); color:var(--text);}
+  .btn-outline:hover{border-color:var(--accent); color:var(--accent);}
+  .btn-green{background:var(--green); color:#fff;}
+  .btn-green:hover{background:#15803d;}
+  .btn-purple{background:var(--purple); color:#fff;}
+  .btn-purple:hover{background:#6d28d9;}
+  .btn:disabled{opacity:.45; cursor:not-allowed;}
+  .actions-row{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;}
+
+  /* right panel */
+  .rp-top{display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap; margin-bottom:10px;}
+  .rp-filename{font-family:var(--mono); font-size:.85rem; font-weight:700;}
+  .status-pill{display:inline-flex; align-items:center; gap:6px; font-size:.74rem; font-weight:700; padding:4px 10px; border-radius:999px; background:#fef3c7; color:#92400e;}
+  .status-pill.on{background:#dcfce7; color:#166534;}
+  .rp-meta{font-size:.72rem; color:var(--text2); margin-bottom:14px;}
+  .rp-meta code{background:#f1f5f9; padding:1px 6px; border-radius:4px;}
+
+  .tabs{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px; border-bottom:1px solid var(--border); padding-bottom:10px;}
+  .tab-btn{background:none; border:1px solid transparent; padding:6px 12px; font-size:.78rem; font-weight:700; color:var(--text2); border-radius:8px; cursor:pointer;}
+  .tab-btn.active{background:var(--accent-soft); color:var(--accent); border-color:#c7d2fe;}
+
+  .summary-box{background:#f8fafc; border:1px solid var(--border); border-radius:10px; padding:12px 14px; font-size:.82rem; margin-bottom:12px;}
+  .summary-box b{color:var(--purple);}
+
+  pre.md-view{background:#0f172a; color:#e2e8f0; padding:16px; border-radius:12px; font-family:var(--mono); font-size:.76rem; white-space:pre-wrap; word-break:break-word; max-height:560px; overflow:auto;}
+  .folder-tree{font-family:var(--mono); font-size:.76rem; color:var(--text2); background:#f8fafc; border:1px solid var(--border); border-radius:10px; padding:12px; white-space:pre; overflow-x:auto; margin-bottom:14px;}
+
+  .autosave{font-size:.7rem; color:#94a3b8; text-align:right; margin-top:8px;}
+
+  .toast{position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:#0f172a; color:#fff; font-size:.82rem; font-weight:600; padding:10px 18px; border-radius:999px; opacity:0; pointer-events:none; transition:.25s; z-index:200;}
+  .toast.show{opacity:1; transform:translate(-50%,-4px);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="eyebrow">CHARACTER SHEET STUDIO · V1.0 SAFE BUILD</div>
+  <h1>캐릭터 시트 기획실 <span class="ver">Adult-Only Stable Edition</span></h1>
+  <p class="sub">일반 캐릭터 시트, 한복/의상보드 시트, 디자이너 시트 → 모델 착장 적용(스타일링) 모드를 한 화면에서 다룹니다. 모든 인물 설정은 성인(20세 이상) 기준이며, 착장 구성은 아우터웨어까지만 지원합니다.</p>
+  <div class="safe-badge">🔒 성인 캐릭터 전용 · 아우터웨어 한정 빌드 (속옷/란제리 레이어 미지원)</div>
+
+  <div class="modes" id="modeCards"></div>
+  <div class="steps" id="stepTabs"></div>
+  <div class="banner" id="banner"></div>
+
+  <div class="layout">
+    <!-- LEFT -->
+    <div class="panel left-panel">
+
+      <section class="step-section" id="step-1">
+        <div class="section-head"><h2>1. 캐릭터 / 모델 기준 입력</h2><span>모든 모드 공유</span></div>
+        <div class="field"><label>이름</label><input type="text" id="f_name" value="서연"></div>
+        <div class="row2">
+          <div class="field"><label>역할</label><input type="text" id="f_role" value="AI 인플루언서 / 브랜드 캠페인 모델"></div>
+          <div class="field">
+            <label>나이 (성인 전용)</label>
+            <input type="number" id="f_age" min="20" step="1" value="24">
+            <div class="hint">이 스튜디오는 만 20세 이상 성인 캐릭터만 지원합니다.</div>
+          </div>
+        </div>
+        <div class="row2">
+          <div class="field"><label>키</label><input type="text" id="f_height" value="170cm"></div>
+          <div class="field"><label>체형</label><input type="text" id="f_body" value="슬림 레귤러 체형, 곧은 어깨선"></div>
+        </div>
+        <div class="field"><label>성격</label><textarea id="f_personality">차분하고 세련되며 프로페셔널함, 카메라 앞에서 자신감 있는 태도</textarea></div>
+        <div class="field"><label>얼굴 / 외형 특징</label><textarea id="f_features">긴 웨이브 브라운 헤어, 또렷한 이목구비, 자연스러운 피부 질감, 화보급 분위기의 세련된 인상</textarea></div>
+      </section>
+
+      <section class="step-section" id="step-2">
+        <div class="section-head"><h2>2. 모드별 설정</h2><span id="modeLabel2"></span></div>
+
+        <!-- GENERAL -->
+        <div class="mode-pane" data-pane="general">
+          <div class="field"><label>표정 세트</label><textarea id="g_expr">자신감 있는 미소, 부드러운 응시, 놀란 표정, 장난스러운 윙크, 진지한 표정</textarea></div>
+          <div class="field"><label>전신 포즈 세트</label><textarea id="g_pose">정면 전신, 측면 워킹 포즈, 캐주얼 기대기 포즈, 손 동작 포즈</textarea></div>
+          <div class="row2">
+            <div class="field"><label>스타일 / 톤</label>
+              <select id="g_tone">
+                <option>광고 모델형 (advertising campaign)</option>
+                <option>AI 인플루언서형</option>
+                <option>드라마 주인공형</option>
+                <option>브랜드 룩북형</option>
+              </select>
+            </div>
+            <div class="field"><label>출력 캔버스</label>
+              <select id="g_canvas"><option>4:5 vertical</option><option>1:1 square</option><option>3:4 vertical</option><option>16:9 landscape</option></select>
+            </div>
+          </div>
+        </div>
+
+        <!-- HANBOK -->
+        <div class="mode-pane" data-pane="hanbok">
+          <div class="field"><label>전통복식 종류</label><input type="text" id="h_type" value="생활한복, 개량한복"></div>
+          <div class="field"><label>턴어라운드 뷰</label>
+            <div style="display:flex; gap:16px; font-size:.85rem; margin-top:4px;">
+              <label style="display:flex; align-items:center; gap:6px; font-weight:500;"><input type="checkbox" id="h_front" checked> 정면</label>
+              <label style="display:flex; align-items:center; gap:6px; font-weight:500;"><input type="checkbox" id="h_side" checked> 측면</label>
+              <label style="display:flex; align-items:center; gap:6px; font-weight:500;"><input type="checkbox" id="h_back" checked> 후면</label>
+            </div>
+          </div>
+          <div class="field"><label>소재 / 장신구</label><textarea id="h_material">은은한 실크 소재, 노리개, 비녀, 전통 자수 디테일</textarea></div>
+          <div class="field"><label>코스튬보드 용도</label><input type="text" id="h_purpose" value="브랜드 룩북 촬영용"></div>
+        </div>
+
+        <!-- STYLING -->
+        <div class="mode-pane" data-pane="styling">
+          <div class="locked-note">⚠ 디자이너 시트에 속옷/이너웨어 항목이 있어도 이 빌드는 이를 전부 제외하고, 아우터웨어(자켓/상의/하의/신발/액세서리)만 추출합니다.</div>
+          <div id="looksContainer"></div>
+          <button class="add-look" id="addLookBtn" type="button">+ 룩 추가</button>
+        </div>
+      </section>
+
+      <section class="step-section" id="step-3">
+        <div class="section-head"><h2>3. 프롬프트 생성</h2><span>실시간 반영</span></div>
+        <p style="font-size:.82rem; color:var(--text2); margin-bottom:12px;">입력값은 자동으로 우측 미리보기에 반영됩니다. 아래 버튼으로 최종본을 확정하세요.</p>
+        <button class="btn btn-purple" id="genBtn" type="button">프롬프트 생성 / 갱신</button>
+      </section>
+
+      <section class="step-section" id="step-4">
+        <div class="section-head"><h2>4. 레퍼런스 업로드</h2><span id="uploadCount">0/4장</span></div>
+        <div class="upload-grid" id="uploadGrid"></div>
+      </section>
+
+      <section class="step-section" id="step-5">
+        <div class="section-head"><h2>5. MASTER FACE 확인</h2><span>얼굴 고정 소스 선택</span></div>
+        <div class="master-list" id="masterList"></div>
+      </section>
+
+      <section class="step-section" id="step-6">
+        <div class="section-head"><h2>6. 프로젝트 저장</h2><span>로컬 저장 / 다운로드</span></div>
+        <div class="field"><label>작업 폴더 경로 (선택, 표기용)</label><input type="text" id="f_workdir" placeholder="예: D:\CharacterProjects\서연"></div>
+        <div class="actions-row">
+          <button class="btn btn-outline" id="copyBtn2" type="button">현재 탭 복사</button>
+          <button class="btn btn-outline" id="mdBtn2" type="button">MD 다운로드</button>
+          <button class="btn btn-purple" id="folderBtn2" type="button">프로젝트 폴더 매니페스트 저장</button>
+        </div>
+        <div class="autosave" id="autosaveNote">자동 저장됨</div>
+      </section>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="panel right-panel">
+      <div class="rp-top">
+        <div>
+          <div class="rp-filename" id="rpFilename">서연_general_system.md</div>
+          <div class="rp-meta" id="rpMeta"></div>
+        </div>
+        <span class="status-pill" id="bridgeStatus">Orca Bridge: 미연결</span>
+      </div>
+      <div class="actions-row" style="margin-bottom:14px;">
+        <button class="btn btn-outline" id="copyBtn" type="button">현재 탭 복사</button>
+        <button class="btn btn-outline" id="mdBtn" type="button">MD 다운로드</button>
+        <button class="btn btn-outline" id="orcaCheckBtn" type="button">Orca 연결 확인</button>
+        <button class="btn btn-green" id="orcaSendBtn" type="button" disabled>Orca로 보내기</button>
+        <button class="btn btn-purple" id="folderBtn" type="button">프로젝트 폴더 저장</button>
+      </div>
+
+      <div class="tabs" id="rpTabs"></div>
+      <div id="rpContent"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- keyword guards ---------- */
+  var MINOR_WORDS = ["초등학생","중학생","고등학생","여고생","남고생","미성년","교복 착용","유치원","취학"];
+  var MINOR_AGE_RE = /(?:^|[^0-9])(1[0-9])\s?세(?:$|[^0-9])/; // 10~19세
+  var UNDERWEAR_WORDS = ["속옷","란제리","브라","팬티","lingerie","underwear","bra ","panties","undergarment"];
+
+  function findMinorHit(text){
+    if(!text) return null;
+    for(var i=0;i<MINOR_WORDS.length;i++){ if(text.indexOf(MINOR_WORDS[i])!==-1) return MINOR_WORDS[i]; }
+    var m = text.match(MINOR_AGE_RE);
+    if(m) return m[1]+"세";
+    return null;
+  }
+  function findUnderwearHit(text){
+    if(!text) return null;
+    var low = text.toLowerCase();
+    for(var i=0;i<UNDERWEAR_WORDS.length;i++){ if(low.indexOf(UNDERWEAR_WORDS[i].toLowerCase())!==-1) return UNDERWEAR_WORDS[i]; }
+    return null;
+  }
+
+  /* ---------- state ---------- */
+  var STORAGE_KEY = "css_studio_state_v1";
+  var state = {
+    mode: "general",
+    activeTab: "overview",
+    looks: [],
+    refs: {},
+    masterFace: null,
+    bridgeConnected: false
+  };
+
+  var MODES = [
+    {id:"general", title:"일반 캐릭터 시트", desc:"표정 · 얼굴 연속성 · 전신 포즈 · 광고 모델형 인플루언서 시트"},
+    {id:"hanbok", title:"한복 / 의상보드 시트", desc:"전통 복식 · 턴어라운드 · 소재/장신구 · 코스튬보드형"},
+    {id:"styling", title:"스타일링 적용 모드", desc:"디자이너 시트 → 내 모델 착장 · 아우터웨어 한정 · 얼굴 유지"}
+  ];
+  var STEPS = ["1 캐릭터/모델 기준 입력","2 모드별 설정","3 프롬프트 생성","4 레퍼런스 업로드","5 MASTER FACE 확인","6 프로젝트 저장"];
+
+  var REF_SLOTS = {
+    general: [["full_body","전신 레퍼런스"],["face_1","얼굴 레퍼런스 1"],["face_2","얼굴 레퍼런스 2"],["expression_sheet","표정 시트"]],
+    hanbok: [["costume_ref","의상 레퍼런스"],["front_view","정면 뷰"],["side_view","측면 뷰"],["back_view","후면 뷰"]],
+    styling: [["model_full_body","모델 전신"],["designer_sheet","디자이너 스타일링 시트"],["model_face_source","모델 얼굴 소스"],["master_face","MASTER FACE"]]
+  };
+
+  var OUTPUT_LABELS = {
+    general: ["EXPRESSION SHEET","FULL BODY POSE SET","LIFESTYLE / CONTEXT SHOTS","SOCIAL / CAMPAIGN PROFILE CARD"],
+    hanbok: ["FRONT VIEW","SIDE VIEW","BACK VIEW","DETAIL / MATERIAL CLOSE-UP"],
+    styling: ["STYLED HERO LOOK","LOOK TURNAROUND","DETAIL LOOK BOARD","CAMPAIGN LOOKBOOK FINAL"]
+  };
+
+  var QUALITY_LINE = "advertising-campaign quality, high-fashion beauty photography lighting, flawless professional studio retouch, elegant refined facial proportions, magazine-editorial polish";
+  var SAFETY_LINE = "SAFETY LOCK: adult character (20+), fully clothed to outerwear layer only, no lingerie/underwear layer, no minor-coded styling.";
+
+  function uid(){ return "look_" + Math.random().toString(36).slice(2,9); }
+
+  function defaultLook(n){
+    return {
+      id: uid(),
+      name: n===1 ? "Office Chic Campaign Set" : "New Look " + n,
+      situation: n===1 ? "광고 캠페인 / 브랜드 룩북 촬영" : "",
+      mood: n===1 ? "세련되고 도시적이며 자신감 있는 프로페셔널 무드" : "",
+      rules: "디자이너 시트의 레이아웃은 복사하지 않고 의상 정보만 추출한다. 모델의 얼굴 정체성과 체형은 모델 기준 이미지를 따른다. 자켓, 셔츠/상의, 하의, 신발, 액세서리 등 아우터웨어 구성 요소의 형태·색상·디테일만 반영하고, 속옷/란제리 등 이너웨어 항목은 시트에 있어도 전부 제외한다.",
+      garments: "blazer or jacket, shirt or top, skirt or pants, shoes, jewelry or accessories — outerwear only",
+      faceLock: "very strict face + body lock",
+      hairLock: "keep current hairstyle",
+      outputType: "advertising campaign look package",
+      canvas: "4:5 vertical"
+    };
+  }
+
+  /* ---------- DOM refs ---------- */
+  var $ = function(id){ return document.getElementById(id); };
+
+  /* ---------- render mode cards / step tabs ---------- */
+  function renderModeCards(){
+    var el = $("modeCards"); el.innerHTML = "";
+    MODES.forEach(function(m){
+      var d = document.createElement("button");
+      d.type = "button";
+      d.className = "mode-card" + (state.mode===m.id ? " active" : "");
+      d.innerHTML = "<h3>"+m.title+"</h3><p>"+m.desc+"</p>";
+      d.onclick = function(){ state.mode = m.id; onModeChange(); };
+      el.appendChild(d);
+    });
+  }
+  function renderStepTabs(){
+    var el = $("stepTabs"); el.innerHTML = "";
+    STEPS.forEach(function(s, i){
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "step-btn"; b.textContent = s;
+      b.onclick = function(){
+        document.getElementById("step-"+(i+1)).scrollIntoView({behavior:"smooth", block:"start"});
+      };
+      el.appendChild(b);
+    });
+  }
+
+  function onModeChange(){
+    renderModeCards();
+    document.querySelectorAll(".mode-pane").forEach(function(p){
+      p.classList.toggle("active", p.getAttribute("data-pane")===state.mode);
+    });
+    $("modeLabel2").textContent = MODES.find(function(m){return m.id===state.mode;}).title;
+    renderUploadGrid();
+    renderMasterList();
+    renderRightPanel();
+    save();
+  }
+
+  /* ---------- looks (styling mode) ---------- */
+  function renderLooks(){
+    var c = $("looksContainer"); c.innerHTML = "";
+    state.looks.forEach(function(look, idx){
+      var card = document.createElement("div");
+      card.className = "look-card";
+      card.innerHTML =
+        '<div class="look-card-head"><b>룩 '+(idx+1)+'</b>'+
+        (state.looks.length>1 ? '<button class="btn-mini" data-remove="'+look.id+'">삭제</button>' : '')+
+        '</div>'+
+        '<div class="field"><label>룩 이름 / 프로젝트명</label><input type="text" data-f="name" data-id="'+look.id+'" value="'+esc(look.name)+'"></div>'+
+        '<div class="row2">'+
+          '<div class="field"><label>상황 / 용도</label><input type="text" data-f="situation" data-id="'+look.id+'" value="'+esc(look.situation)+'"></div>'+
+          '<div class="field"><label>최종 분위기</label><input type="text" data-f="mood" data-id="'+look.id+'" value="'+esc(look.mood)+'"></div>'+
+        '</div>'+
+        '<div class="field"><label>디자이너 시트 해석 규칙</label><textarea data-f="rules" data-id="'+look.id+'">'+esc(look.rules)+'</textarea></div>'+
+        '<div class="field"><label>착장 구성요소 (아우터웨어 전용)</label><textarea data-f="garments" data-id="'+look.id+'">'+esc(look.garments)+'</textarea></div>'+
+        '<div class="row2">'+
+          '<div class="field"><label>얼굴/체형 유지 강도</label><select data-f="faceLock" data-id="'+look.id+'">'+
+            ["very strict face + body lock","strict face + body lock","medium face lock"].map(function(o){return '<option'+(o===look.faceLock?' selected':'')+'>'+o+'</option>';}).join("")+
+          '</select></div>'+
+          '<div class="field"><label>헤어 유지</label><select data-f="hairLock" data-id="'+look.id+'">'+
+            ["keep current hairstyle","allow styling change"].map(function(o){return '<option'+(o===look.hairLock?' selected':'')+'>'+o+'</option>';}).join("")+
+          '</select></div>'+
+        '</div>'+
+        '<div class="row2">'+
+          '<div class="field"><label>출력 타입</label><select data-f="outputType" data-id="'+look.id+'">'+
+            ["advertising campaign look package","single hero shot","lookbook spread"].map(function(o){return '<option'+(o===look.outputType?' selected':'')+'>'+o+'</option>';}).join("")+
+          '</select></div>'+
+          '<div class="field"><label>캔버스 비율</label><select data-f="canvas" data-id="'+look.id+'">'+
+            ["4:5 vertical","1:1 square","3:4 vertical","16:9 landscape"].map(function(o){return '<option'+(o===look.canvas?' selected':'')+'>'+o+'</option>';}).join("")+
+          '</select></div>'+
+        '</div>';
+      c.appendChild(card);
+    });
+    c.querySelectorAll("[data-f]").forEach(function(inp){
+      inp.addEventListener("input", onLookFieldChange);
+      inp.addEventListener("change", onLookFieldChange);
+    });
+    c.querySelectorAll("[data-remove]").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        state.looks = state.looks.filter(function(l){ return l.id !== btn.getAttribute("data-remove"); });
+        renderLooks(); scheduleRender();
+      });
+    });
+  }
+  function onLookFieldChange(e){
+    var id = e.target.getAttribute("data-id"), f = e.target.getAttribute("data-f");
+    var look = state.looks.find(function(l){ return l.id===id; });
+    if(look){ look[f] = e.target.value; scheduleRender(); }
+  }
+
+  /* ---------- upload slots ---------- */
+  function renderUploadGrid(){
+    var grid = $("uploadGrid"); grid.innerHTML = "";
+    var slots = REF_SLOTS[state.mode];
+    slots.forEach(function(s){
+      var key = s[0], label = s[1];
+      var wrap = document.createElement("div");
+      wrap.className = "upload-slot" + (state.refs[key] ? " done" : "");
+      wrap.innerHTML = '<label>'+label+'</label><input type="file" data-slot="'+key+'" accept="image/*">'+
+        '<div class="status">'+(state.refs[key] ? "✅ " + state.refs[key] : "⬜ 미업로드 (파일명만 기록됩니다)")+'</div>';
+      grid.appendChild(wrap);
+    });
+    grid.querySelectorAll("input[type=file]").forEach(function(inp){
+      inp.addEventListener("change", function(){
+        var key = inp.getAttribute("data-slot");
+        state.refs[key] = inp.files && inp.files[0] ? inp.files[0].name : null;
+        renderUploadGrid(); renderMasterList(); scheduleRender();
+      });
+    });
+    var count = Object.keys(state.refs).filter(function(k){ return state.refs[k] && slots.some(function(s){return s[0]===k;}); }).length;
+    $("uploadCount").textContent = count + "/" + slots.length + "장";
+  }
+
+  function renderMasterList(){
+    var el = $("masterList"); el.innerHTML = "";
+    var slots = REF_SLOTS[state.mode];
+    slots.forEach(function(s){
+      var key = s[0], label = s[1];
+      var row = document.createElement("label");
+      row.className = "master-opt";
+      row.innerHTML = '<input type="radio" name="masterFace" value="'+key+'" '+(state.masterFace===key?"checked":"")+'> '+
+        label + (state.refs[key] ? ' <span style="color:#16a34a; font-size:.72rem;">('+state.refs[key]+')</span>' : ' <span style="color:#94a3b8; font-size:.72rem;">(미업로드)</span>');
+      el.appendChild(row);
+    });
+    el.querySelectorAll("input[type=radio]").forEach(function(r){
+      r.addEventListener("change", function(){ state.masterFace = r.value; scheduleRender(); });
+    });
+  }
+
+  function esc(s){ return (s||"").replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
+
+  /* ---------- validation ---------- */
+  function collect(){
+    return {
+      name: $("f_name").value.trim() || "이름없음",
+      role: $("f_role").value.trim(),
+      age: parseInt($("f_age").value, 10),
+      height: $("f_height").value.trim(),
+      body: $("f_body").value.trim(),
+      personality: $("f_personality").value.trim(),
+      features: $("f_features").value.trim(),
+      general: { expr: $("g_expr").value.trim(), pose: $("g_pose").value.trim(), tone: $("g_tone").value, canvas: $("g_canvas").value },
+      hanbok: { type: $("h_type").value.trim(), front: $("h_front").checked, side: $("h_side").checked, back: $("h_back").checked, material: $("h_material").value.trim(), purpose: $("h_purpose").value.trim() },
+      workdir: $("f_workdir").value.trim()
+    };
+  }
+
+  function validate(data){
+    var problems = [];
+    if(!data.age || data.age < 20){
+      problems.push("나이가 20세 미만이거나 비어 있습니다. 성인 캐릭터만 지원됩니다.");
+    }
+    var scanFields = [data.role, data.personality, data.features, data.hanbok.type, data.hanbok.purpose];
+    state.looks.forEach(function(l){ scanFields.push(l.name, l.situation, l.mood, l.rules, l.garments); });
+    for(var i=0;i<scanFields.length;i++){
+      var hit = findMinorHit(scanFields[i]);
+      if(hit){ problems.push('입력값에서 미성년 연상 표현("'+hit+'")이 감지되었습니다. 성인 캐릭터 표현으로 수정해주세요.'); break; }
+    }
+    var garmentFields = state.looks.map(function(l){ return l.garments; });
+    for(var j=0;j<garmentFields.length;j++){
+      var uHit = findUnderwearHit(garmentFields[j]);
+      if(uHit){ problems.push('착장 구성요소에서 이너웨어/속옷 관련 표현("'+uHit+'")이 감지되었습니다. 이 빌드는 아우터웨어만 지원합니다.'); break; }
+    }
+    return problems;
+  }
+
+  function renderBanner(problems){
+    var b = $("banner");
+    if(problems.length===0){ b.classList.remove("show"); b.innerHTML=""; return; }
+    b.classList.add("show");
+    b.innerHTML = "⚠️ <div>" + problems.map(esc).join("<br>") + "</div>";
+  }
+
+  /* ---------- content generation ---------- */
+  function buildOverview(data){
+    var slots = REF_SLOTS[state.mode];
+    var uploaded = slots.filter(function(s){ return state.refs[s[0]]; }).length;
+    return [
+      "현재 모드: " + MODES.find(function(m){return m.id===state.mode;}).title,
+      "캐릭터: " + data.name + " (" + data.age + "세, " + data.role + ")",
+      "권장 MASTER FACE 소스: " + (state.masterFace ? state.masterFace : "미선택"),
+      "업로드 상태: " + uploaded + "/" + slots.length + "장",
+      "세이프가드: 성인 전용 · 아우터웨어 한정 (속옷/란제리 레이어 미지원)",
+      "품질 방향: " + QUALITY_LINE
+    ].join("\n");
+  }
+
+  function buildOutputs(data){
+    var base = data.name + ", " + data.age + "세, " + data.role + ". 키 " + data.height + ", " + data.body + ". " + data.features + ".";
+    if(state.mode === "general"){
+      var g = data.general;
+      return [
+        base + " 표정: " + g.expr + ". 톤: " + g.tone + ". " + QUALITY_LINE,
+        base + " 전신 포즈: " + g.pose + ". 캔버스: " + g.canvas + ". " + QUALITY_LINE,
+        base + " 라이프스타일 컨텍스트 샷(일상/여행/업무 등 상황별 전신 컷), 자연광 또는 캠페인 조명. " + QUALITY_LINE,
+        base + " 소셜/캠페인 프로필 카드 레이아웃: 이름, 역할, 포인트 컬러, 대표 표정 3컷, 대표 포즈 3컷. " + QUALITY_LINE
+      ];
+    }
+    if(state.mode === "hanbok"){
+      var h = data.hanbok;
+      return [
+        (h.front? base + " 전통복식(" + h.type + ") 정면 턴어라운드. 소재/장신구: " + h.material + ". " + QUALITY_LINE : "정면 뷰 미선택"),
+        (h.side? base + " 전통복식(" + h.type + ") 측면 턴어라운드. 소재/장신구: " + h.material + ". " + QUALITY_LINE : "측면 뷰 미선택"),
+        (h.back? base + " 전통복식(" + h.type + ") 후면 턴어라운드. 소재/장신구: " + h.material + ". " + QUALITY_LINE : "후면 뷰 미선택"),
+        base + " 소재/장신구 디테일 클로즈업(" + h.material + "), 용도: " + h.purpose + ". " + QUALITY_LINE
+      ];
+    }
+    // styling — OUTPUT 1-3 are photographic treatments of the primary look,
+    // OUTPUT 4 rolls up every configured look into one campaign lookbook.
+    var primary = state.looks[0];
+    if(!primary){ return ["(룩을 추가해주세요)","(룩을 추가해주세요)","(룩을 추가해주세요)","(룩을 추가해주세요)"]; }
+    var lookCore = " 룩: " + primary.name + " (" + primary.situation + "). 분위기: " + primary.mood +
+      ". 착장: " + primary.garments + ". 얼굴/체형: " + primary.faceLock + ", 헤어: " + primary.hairLock +
+      ". 해석 규칙: " + primary.rules + ". 캔버스: " + primary.canvas + ". " + QUALITY_LINE;
+    var allNames = state.looks.map(function(l){ return l.name; }).join(", ");
+    return [
+      "[STYLED HERO LOOK]" + base + lookCore,
+      "[LOOK TURNAROUND] 정면/측면/후면 턴어라운드." + base + lookCore,
+      "[DETAIL LOOK BOARD] 원단/장신구/디테일 클로즈업 구성." + base + lookCore,
+      "[CAMPAIGN LOOKBOOK FINAL] 구성 룩 전체(" + allNames + ")를 하나의 캠페인 룩북 스프레드로 편집." + base + " 출력: " + primary.outputType + ". " + QUALITY_LINE
+    ];
+  }
+
+  function buildOrder(data){
+    var labels = OUTPUT_LABELS[state.mode];
+    var lines = [
+      "# WORKFLOW — " + MODES.find(function(m){return m.id===state.mode;}).title.toUpperCase(),
+      "",
+      "RECOMMENDED ORDER",
+      "1. Prepare model references and choose MASTER FACE",
+      "2. Review mode-specific settings (Step 2)",
+      "3. OUTPUT 1 — " + labels[0],
+      "4. OUTPUT 2 — " + labels[1],
+      "5. OUTPUT 3 — " + labels[2],
+      "6. OUTPUT 4 — " + labels[3],
+      "",
+      "HOW TO USE REFERENCES",
+      "- Model references = identity",
+      "- MASTER FACE = final face lock across all outputs",
+      (state.mode==="styling" ? "- Designer sheet = outfit transfer authority (outerwear only)" : "- Costume/base sheet = styling reference"),
+      "",
+      "PROMPT RULE OF THUMB",
+      "- Preserve model identity",
+      "- " + (state.mode==="styling" ? "Transfer outfit faithfully, do not copy sheet layout" : "Keep pose/expression continuity across outputs"),
+      "- Rebuild as a real advertising-campaign-quality shot, not a flat reference copy",
+      "",
+      SAFETY_LINE
+    ];
+    return lines.join("\n");
+  }
+
+  function buildFolderTree(data){
+    var root, subfolder;
+    if(state.mode==="general"){ root = data.name+"_character_sheet_project"; }
+    else if(state.mode==="hanbok"){ root = data.name+"_hanbok_board_project"; }
+    else { root = data.name+"_styling_transfer_project"; }
+    var refLines = REF_SLOTS[state.mode].map(function(s){ return "│  ├─ " + s[0] + ".*"; });
+    var outLines = OUTPUT_LABELS[state.mode].map(function(l,i){ return "│  ├─ output"+(i+1)+"_"+l.toLowerCase().replace(/[^a-z0-9]+/g,"_")+".*"; });
+    return [
+      root + "/",
+      "├─ reference/",
+      refLines.join("\n"),
+      "├─ outputs/",
+      outLines.join("\n"),
+      "├─ md/",
+      "│  └─ " + fileName(data),
+      "└─ safety_notice.txt  (adult-only, outerwear-only build)"
+    ].join("\n");
+  }
+
+  function fileName(data){
+    return data.name + "_" + state.mode + "_system.md";
+  }
+
+  function buildFullMarkdown(data, problems){
+    var out = buildOutputs(data);
+    var labels = OUTPUT_LABELS[state.mode];
+    var md = [];
+    md.push("# " + data.name + " — " + MODES.find(function(m){return m.id===state.mode;}).title);
+    md.push("");
+    md.push("- 나이: " + data.age + "세 (성인 전용 빌드)");
+    md.push("- 역할: " + data.role);
+    md.push("- 키/체형: " + data.height + " / " + data.body);
+    md.push("- 성격: " + data.personality);
+    md.push("- 얼굴/외형 특징: " + data.features);
+    md.push("- MASTER FACE 소스: " + (state.masterFace || "미선택"));
+    md.push("- 작업 폴더: " + (data.workdir || "(미지정)"));
+    md.push("");
+    md.push("## " + SAFETY_LINE);
+    md.push("");
+    md.push("## OVERVIEW");
+    md.push(buildOverview(data));
+    md.push("");
+    labels.forEach(function(l, i){
+      md.push("## OUTPUT " + (i+1) + " — " + l);
+      md.push(out[i] || "(설정 필요)");
+      md.push("");
+    });
+    md.push("## EXECUTION ORDER");
+    md.push(buildOrder(data));
+    md.push("");
+    md.push("## PROJECT FOLDER");
+    md.push("```");
+    md.push(buildFolderTree(data));
+    md.push("```");
+    if(problems.length){
+      md.push("");
+      md.push("## ⚠ VALIDATION WARNINGS (해결 전까지 다운로드/전송 비활성화)");
+      problems.forEach(function(p){ md.push("- " + p); });
+    }
+    return md.join("\n");
+  }
+
+  /* ---------- right panel render ---------- */
+  var TAB_DEFS = [
+    {id:"overview", label:"개요"},
+    {id:"o1", label:"OUTPUT 1"},
+    {id:"o2", label:"OUTPUT 2"},
+    {id:"o3", label:"OUTPUT 3"},
+    {id:"o4", label:"OUTPUT 4"},
+    {id:"order", label:"실행 순서"},
+    {id:"full", label:"MD 전체"}
+  ];
+
+  var lastData = null, lastProblems = [], lastMd = "";
+
+  function renderRightPanel(){
+    var data = collect();
+    var problems = validate(data);
+    lastData = data; lastProblems = problems;
+    renderBanner(problems);
+
+    var canAct = problems.length === 0;
+    [$("mdBtn"), $("mdBtn2"), $("folderBtn"), $("folderBtn2")].forEach(function(b){ b.disabled = !canAct; });
+    $("orcaSendBtn").disabled = !canAct || !state.bridgeConnected;
+
+    $("rpFilename").textContent = fileName(data);
+    $("rpMeta").innerHTML = "MASTER FACE: <code>" + (state.masterFace||"미선택") + "</code> · 업로드 " +
+      Object.keys(state.refs).filter(function(k){return state.refs[k];}).length + "/" + REF_SLOTS[state.mode].length + "장";
+
+    var tabsEl = $("rpTabs"); tabsEl.innerHTML = "";
+    TAB_DEFS.forEach(function(t){
+      var b = document.createElement("button");
+      b.type="button"; b.className = "tab-btn" + (state.activeTab===t.id ? " active":"");
+      b.textContent = t.id.match(/^o[1-4]$/) ? t.label + " · " + (OUTPUT_LABELS[state.mode][parseInt(t.id.slice(1),10)-1]) : t.label;
+      b.onclick = function(){ state.activeTab = t.id; renderRightPanel(); };
+      tabsEl.appendChild(b);
+    });
+
+    var outputs = buildOutputs(data);
+    var full = buildFullMarkdown(data, problems);
+    lastMd = full;
+    var content = $("rpContent");
+
+    if(state.activeTab === "overview"){
+      content.innerHTML = '<div class="folder-tree">'+esc(buildFolderTree(data))+'</div><pre class="md-view">'+esc(buildOverview(data))+'</pre>';
+    } else if(/^o[1-4]$/.test(state.activeTab)){
+      var idx = parseInt(state.activeTab.slice(1),10)-1;
+      content.innerHTML = '<pre class="md-view">'+esc(outputs[idx] || "(설정 필요)")+'</pre>';
+    } else if(state.activeTab === "order"){
+      content.innerHTML = '<pre class="md-view">'+esc(buildOrder(data))+'</pre>';
+    } else {
+      content.innerHTML = '<pre class="md-view">'+esc(full)+'</pre>';
+    }
+  }
+
+  /* ---------- actions ---------- */
+  function currentTabText(){
+    if(!lastData) return "";
+    var outputs = buildOutputs(lastData);
+    if(state.activeTab === "overview") return buildOverview(lastData);
+    if(/^o[1-4]$/.test(state.activeTab)) return outputs[parseInt(state.activeTab.slice(1),10)-1] || "";
+    if(state.activeTab === "order") return buildOrder(lastData);
+    return lastMd;
+  }
+
+  function toast(msg){
+    var t = $("toast"); t.textContent = msg; t.classList.add("show");
+    clearTimeout(toast._h); toast._h = setTimeout(function(){ t.classList.remove("show"); }, 2200);
+  }
+
+  function copyCurrent(){
+    var text = currentTabText();
+    if(!text){ toast("복사할 내용이 없습니다."); return; }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){ toast("현재 탭 내용을 복사했습니다."); }, function(){ toast("복사 실패 — 브라우저 권한을 확인해주세요."); });
+    } else {
+      toast("이 브라우저는 클립보드 복사를 지원하지 않습니다.");
+    }
+  }
+
+  function downloadMd(){
+    if(lastProblems.length){ toast("검증 경고를 먼저 해결해주세요."); return; }
+    var blob = new Blob([lastMd], {type:"text/markdown;charset=utf-8"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = fileName(lastData);
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    toast("MD 파일을 다운로드했습니다.");
+  }
+
+  function downloadFolderManifest(){
+    if(lastProblems.length){ toast("검증 경고를 먼저 해결해주세요."); return; }
+    var content = "PROJECT FOLDER MANIFEST\n" + "generated: " + new Date().toISOString() + "\n\n" + buildFolderTree(lastData) +
+      "\n\n(이 파일은 실제 폴더를 생성하지 않는 참고용 매니페스트입니다. 표시된 구조대로 로컬에서 폴더를 만들어 사용하세요.)";
+    var blob = new Blob([content], {type:"text/plain;charset=utf-8"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = lastData.name + "_folder_manifest.txt";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    toast("폴더 매니페스트를 다운로드했습니다.");
+  }
+
+  function checkOrcaBridge(){
+    var pill = $("bridgeStatus");
+    pill.textContent = "Orca Bridge: 확인 중...";
+    var ctrl = ("AbortController" in window) ? new AbortController() : null;
+    var timer = setTimeout(function(){ if(ctrl) ctrl.abort(); }, 1500);
+    fetch("http://127.0.0.1:8765/ping", {signal: ctrl ? ctrl.signal : undefined})
+      .then(function(res){
+        clearTimeout(timer);
+        state.bridgeConnected = !!(res && res.ok);
+        updateBridgeUi();
+      })
+      .catch(function(){
+        clearTimeout(timer);
+        state.bridgeConnected = false;
+        updateBridgeUi();
+        toast("로컬 Orca Bridge 앱이 감지되지 않았습니다. (127.0.0.1:8765)");
+      });
+  }
+  function updateBridgeUi(){
+    var pill = $("bridgeStatus");
+    pill.textContent = "Orca Bridge: " + (state.bridgeConnected ? "연결됨" : "미연결");
+    pill.classList.toggle("on", state.bridgeConnected);
+    $("orcaSendBtn").disabled = !state.bridgeConnected || lastProblems.length>0;
+  }
+  function sendToOrca(){
+    if(!state.bridgeConnected){ toast("먼저 Orca Bridge 연결을 확인해주세요."); return; }
+    toast("Orca Bridge로 전송을 시도했습니다.");
+  }
+
+  /* ---------- persistence ---------- */
+  var saveTimer = null;
+  function save(){
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(function(){
+      try{
+        var data = collect();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+          mode: state.mode, looks: state.looks, masterFace: state.masterFace,
+          form: data
+        }));
+        $("autosaveNote").textContent = "자동 저장됨 · " + new Date().toLocaleTimeString();
+      }catch(e){}
+    }, 400);
+  }
+  function load(){
+    try{
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return false;
+      var saved = JSON.parse(raw);
+      if(saved.mode) state.mode = saved.mode;
+      if(saved.looks && saved.looks.length) state.looks = saved.looks;
+      if(saved.masterFace) state.masterFace = saved.masterFace;
+      if(saved.form){
+        var f = saved.form;
+        $("f_name").value = f.name || $("f_name").value;
+        $("f_role").value = f.role || $("f_role").value;
+        if(f.age) $("f_age").value = f.age;
+        $("f_height").value = f.height || $("f_height").value;
+        $("f_body").value = f.body || $("f_body").value;
+        $("f_personality").value = f.personality || $("f_personality").value;
+        $("f_features").value = f.features || $("f_features").value;
+        if(f.general){ $("g_expr").value=f.general.expr||""; $("g_pose").value=f.general.pose||""; $("g_tone").value=f.general.tone||$("g_tone").value; $("g_canvas").value=f.general.canvas||$("g_canvas").value; }
+        if(f.hanbok){ $("h_type").value=f.hanbok.type||""; $("h_front").checked=!!f.hanbok.front; $("h_side").checked=!!f.hanbok.side; $("h_back").checked=!!f.hanbok.back; $("h_material").value=f.hanbok.material||""; $("h_purpose").value=f.hanbok.purpose||""; }
+        $("f_workdir").value = f.workdir || "";
+      }
+      return true;
+    }catch(e){ return false; }
+  }
+
+  function scheduleRender(){ renderRightPanel(); save(); }
+
+  /* ---------- wire up ---------- */
+  function bindStaticInputs(){
+    ["f_name","f_role","f_age","f_height","f_body","f_personality","f_features",
+     "g_expr","g_pose","g_tone","g_canvas",
+     "h_type","h_front","h_side","h_back","h_material","h_purpose","f_workdir"
+    ].forEach(function(id){
+      var el = $(id);
+      el.addEventListener("input", function(){
+        el.classList.toggle("invalid", id==="f_age" && (!el.value || parseInt(el.value,10)<20));
+        scheduleRender();
+      });
+      el.addEventListener("change", scheduleRender);
+    });
+  }
+
+  function init(){
+    renderModeCards();
+    renderStepTabs();
+    if(state.looks.length===0) state.looks = [defaultLook(1)];
+    load();
+    if(state.looks.length===0) state.looks = [defaultLook(1)];
+    document.querySelectorAll(".mode-pane").forEach(function(p){ p.classList.toggle("active", p.getAttribute("data-pane")===state.mode); });
+    renderModeCards();
+    $("modeLabel2").textContent = MODES.find(function(m){return m.id===state.mode;}).title;
+    bindStaticInputs();
+    renderLooks();
+    renderUploadGrid();
+    renderMasterList();
+    $("addLookBtn").addEventListener("click", function(){
+      state.looks.push(defaultLook(state.looks.length+1));
+      renderLooks(); scheduleRender();
+    });
+    $("genBtn").addEventListener("click", function(){ renderRightPanel(); toast("프롬프트를 갱신했습니다."); });
+    $("copyBtn").addEventListener("click", copyCurrent);
+    $("copyBtn2").addEventListener("click", copyCurrent);
+    $("mdBtn").addEventListener("click", downloadMd);
+    $("mdBtn2").addEventListener("click", downloadMd);
+    $("folderBtn").addEventListener("click", downloadFolderManifest);
+    $("folderBtn2").addEventListener("click", downloadFolderManifest);
+    $("orcaCheckBtn").addEventListener("click", checkOrcaBridge);
+    $("orcaSendBtn").addEventListener("click", sendToOrca);
+    renderRightPanel();
+  }
+
+  document.addEventListener("DOMContentLoaded", init);
+})();
+</script>
+</body>
+</html>
