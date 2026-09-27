@@ -149,7 +149,7 @@
         </div>
         <div class="row2">
           <div class="field"><label>키</label><input type="text" id="f_height" value="170cm"></div>
-          <div class="field"><label>체형</label><input type="text" id="f_body" value="슬림 레귤러 체형, 곧은 어깨선"></div>
+          <div class="field"><label>체형</label><input type="text" id="f_body" value="미스코리아 본선급 균형 잡힌 비율, 슬림하고 곧은 어깨선, 우아한 자세"></div>
         </div>
         <div class="field"><label>성격</label><textarea id="f_personality">차분하고 세련되며 프로페셔널함, 카메라 앞에서 자신감 있는 태도</textarea></div>
         <div class="field"><label>얼굴 / 외형 특징</label><textarea id="f_features">긴 웨이브 브라운 헤어, 또렷한 이목구비, 자연스러운 피부 질감, 화보급 분위기의 세련된 인상</textarea></div>
@@ -313,13 +313,14 @@
   function defaultLook(n){
     return {
       id: uid(),
-      name: n===1 ? "Office Chic Campaign Set" : "New Look " + n,
-      situation: n===1 ? "광고 캠페인 / 브랜드 룩북 촬영" : "",
-      mood: n===1 ? "세련되고 도시적이며 자신감 있는 프로페셔널 무드" : "",
+      name: n===1 ? "Mini Skirt Office Campaign Look (미니스커트 오피스룩)" : "New Look " + n,
+      situation: n===1 ? "광고 캠페인 / 오피스룩 화보 촬영" : "",
+      mood: n===1 ? "세련되고 도시적인 커리어우먼 무드, 단정하면서도 자신감 있는 분위기" : "",
       rules: "디자이너 시트의 레이아웃은 복사하지 않고 의상 정보만 추출한다. 모델의 얼굴 정체성과 체형은 모델 기준 이미지를 따른다. 자켓, 셔츠/상의, 하의, 신발, 액세서리 등 아우터웨어 구성 요소의 형태·색상·디테일만 반영하고, 속옷/란제리 등 이너웨어 항목은 시트에 있어도 전부 제외한다.",
-      garments: "blazer or jacket, shirt or top, skirt or pants, shoes, jewelry or accessories — outerwear only",
+      garments: n===1 ? "tailored blazer, fitted blouse or shirt, short mini skirt (office-appropriate hemline), pointed-toe heels, minimal jewelry — outerwear only" : "blazer or jacket, shirt or top, skirt or pants, shoes, jewelry or accessories — outerwear only",
+      hairOptions: n===1 ? "1) 긴 생머리 애쉬브라운  2) 볼륨 웨이브 롱헤어 초콜릿브라운  3) 단정한 보브컷 다크브라운  4) 하이 포니테일 업스타일 브라운블랙  5) 레이어드 미디엄 헤어 카라멜브라운" : "",
       faceLock: "very strict face + body lock",
-      hairLock: "keep current hairstyle",
+      hairLock: "allow styling change",
       outputType: "advertising campaign look package",
       canvas: "4:5 vertical"
     };
@@ -381,6 +382,7 @@
         '</div>'+
         '<div class="field"><label>디자이너 시트 해석 규칙</label><textarea data-f="rules" data-id="'+look.id+'">'+esc(look.rules)+'</textarea></div>'+
         '<div class="field"><label>착장 구성요소 (아우터웨어 전용)</label><textarea data-f="garments" data-id="'+look.id+'">'+esc(look.garments)+'</textarea></div>'+
+        '<div class="field"><label>헤어스타일 옵션 (다중, 촬영별 로테이션)</label><textarea data-f="hairOptions" data-id="'+look.id+'" placeholder="예: 1) 긴 생머리 브라운  2) 웨이브 롱헤어 ...">'+esc(look.hairOptions||"")+'</textarea></div>'+
         '<div class="row2">'+
           '<div class="field"><label>얼굴/체형 유지 강도</label><select data-f="faceLock" data-id="'+look.id+'">'+
             ["very strict face + body lock","strict face + body lock","medium face lock"].map(function(o){return '<option'+(o===look.faceLock?' selected':'')+'>'+o+'</option>';}).join("")+
@@ -539,6 +541,7 @@
     if(!primary){ return ["(룩을 추가해주세요)","(룩을 추가해주세요)","(룩을 추가해주세요)","(룩을 추가해주세요)"]; }
     var lookCore = " 룩: " + primary.name + " (" + primary.situation + "). 분위기: " + primary.mood +
       ". 착장: " + primary.garments + ". 얼굴/체형: " + primary.faceLock + ", 헤어: " + primary.hairLock +
+      (primary.hairOptions ? ". 헤어스타일 로테이션(촬영별 택1): " + primary.hairOptions : "") +
       ". 해석 규칙: " + primary.rules + ". 캔버스: " + primary.canvas + ". " + QUALITY_LINE;
     var allNames = state.looks.map(function(l){ return l.name; }).join(", ");
     return [
