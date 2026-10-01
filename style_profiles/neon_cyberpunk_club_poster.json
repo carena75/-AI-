@@ -1,0 +1,24 @@
+{
+  "name": "neon_cyberpunk_club_poster",
+  "source": "LOVE LEVEL Barcelona 클럽 포스터 (9:16)",
+  "genre": "cyberpunk neon x Y2K chrome nightclub poster, commercial agency quality",
+  "palette": {
+    "background": ["#2A0A3F", "#B0124F", "#E8195A"],
+    "accent": ["#19E3FF cyan", "#FF2E7A neon pink", "#E6F23A acid yellow (소량)"],
+    "text": "#FFFFFF"
+  },
+  "layout": "중앙 단일 축, 상단 로고, 중앙 3D 타이틀, 좌측 날짜 배지, 중앙 인물, 양측 대칭 네온 오브젝트, 하단 라인업/정보/스폰서",
+  "key_elements": [
+    "3D extruded cyan chrome title with pink 3D heart, magenta rim light",
+    "diagonal neon light streaks radiating from center",
+    "glass-tube neon lightning-bolt sculptures with bloom and reflections",
+    "futuristic subject with LED visor goggles, cyan rim + pink fill",
+    "translucent dark info panel for small text, white monochrome sponsor row"
+  ],
+  "lessons": [
+    "작은 글씨는 6분할/5분할 시트에서 깨짐 -> 최종본은 단일 컷",
+    "정확한 텍스트는 따옴표로 그대로 지정",
+    "스폰서 로고는 AI가 변형하기 쉬움 -> 후편집 권장"
+  ],
+  "base_prompt": "Ultra-premium nightclub event poster, vertical 9:16, cyberpunk neon x Y2K chrome style, deep violet to magenta-crimson gradient, diagonal neon light streaks radiating from center, huge glossy 3D extruded cyan metallic title with pink 3D heart, glass-tube neon lightning-bolt sculptures with bloom, futuristic woman with cyan LED visor goggles, cyan rim light plus pink fill, translucent dark info panel, white monochrome sponsor row, razor-sharp text, cinematic grading, 8k"
+}
