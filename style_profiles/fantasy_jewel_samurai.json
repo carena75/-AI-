@@ -1,0 +1,28 @@
+{
+  "name": "fantasy_jewel_samurai",
+  "source": "원본(사무라이 여전사 홀로그램 보석 갑옷) + GPT 역설계본의 프롬프트 박스",
+  "genre": "ultra-detailed fantasy warrior portrait, photorealistic digital painting, realistic anime doll-like face",
+  "subject": {
+    "face": "porcelain soft skin, icy blue eyes, sharp direct gaze, soft red lips, pale-blonde/silver bangs",
+    "hair": "high ponytail, wispy flying strands, fine individual hair lines",
+    "headwear": "ornate gold crown with turquoise/blue gems, pearls, dangling filigree",
+    "costume": "armor-kimono, iridescent holographic embroidery, white+gold+cobalt+magenta+violet+crimson, dragon/cloud motifs, pearls, layered sculpted pauldrons",
+    "weapon": "katana, gold ornate tsuba, white-blue wrapped hilt, steel blade diagonal across frame"
+  },
+  "camera": "low dynamic angle, slight dutch tilt, shallow depth of field, sharp focus on face and eyes, creamy golden and blue bokeh, motion blur on hair/blade",
+  "lighting": "warm orange-gold rim light from right + cool cyan/blue fill, volumetric light, high contrast, glossy reflections",
+  "palette": "cool blue + gold dominant, warm orange accents (keep warm rim; GPT version drifted too cool)",
+  "quality_words": "8k, ultra-detailed, detailed textures, cinematic composition, soft skin, reflective surfaces",
+  "known_weaknesses_to_fix": [
+    "의상 문양이 노이즈처럼 뭉개짐 -> 'clearly readable dragon and cloud motifs' 추가",
+    "칼날 하이라이트 번짐 -> 'crisp polished steel blade with sharp specular line, no glow bleed'",
+    "색이 차갑게 쏠림 -> 'warm orange-gold rim light, keep warm tones'"
+  ],
+  "workflow": [
+    "원본을 참조 이미지로 넣는 i2i 편집 모델 사용 (se-gpt-image-2-edit-i2i)",
+    "단일 컷, quality high, 2k 이상",
+    "6분할 시트는 시안 선택용으로만 사용",
+    "부분 수정: 칼날, 문양, 손"
+  ],
+  "base_prompt": "Ultra-detailed fantasy warrior portrait, photorealistic digital painting, hyper-realistic doll-like beauty in dynamic katana pose, iridescent holographic armor-kimono with clearly readable dragon and cloud motifs, gold filigree, pearls, turquoise gems, ornate jeweled gold crown, pale-blonde high ponytail with flying wisps, icy blue eyes, soft porcelain skin, crisp polished steel katana with sharp specular line, low dynamic angle, shallow depth of field, golden and blue bokeh, warm orange-gold rim light with cool cyan fill, volumetric light, high contrast, sharp focus on face and eyes, 8k, detailed textures"
+}
