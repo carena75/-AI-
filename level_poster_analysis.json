@@ -1,0 +1,83 @@
+{
+  "meta": {
+    "source": "LOVE LEVEL Barcelona nightclub poster (9:16 story/poster)",
+    "target_model": "GPT Image 2",
+    "output_spec": { "aspect_ratio": "9:16", "resolution": "1536x2730 (or 2160x3840 upscale)", "format": "PNG" },
+    "note": "점수는 모델이 실제 생성한 결과물을 사람이 평가해야 확정됩니다. 아래 rubric은 평가 기준이며 자기채점이 아닙니다."
+  },
+  "analysis": {
+    "concept": "Cyberpunk neon + Y2K chrome 3D 타이포. 'Love' 감성과 클럽 에너지를 결합한 EDM 파티 포스터.",
+    "palette": {
+      "background_gradient": ["#2A0A3F deep violet", "#B0124F magenta-crimson", "#E8195A hot pink"],
+      "accent_primary": "#19E3FF electric cyan",
+      "accent_secondary": "#FF2E7A neon pink",
+      "accent_tertiary": "#E6F23A acid yellow (jacket stripes only)",
+      "text_main": "#FFFFFF",
+      "contrast_logic": "차가운 시안(주인공/타이포) vs 따뜻한 마젠타(배경) 보색 대비"
+    },
+    "layout": {
+      "grid": "중앙 정렬 단일 축 + 좌측 날짜 배지 + 양측 대칭 네온 번개",
+      "zones_top_to_bottom": [
+        { "zone": "tagline", "y": "3-5%", "content": "Vive Una nueva experiencia!", "style": "얇은 산세리프, 흰색" },
+        { "zone": "club_logo", "y": "6-13%", "content": "LEVEL / BARCELONA", "style": "이탤릭 와이드 크롬 로고 + 자간 넓은 서브텍스트" },
+        { "zone": "hero_title", "y": "15-42%", "content": "♥ love LEVEL", "style": "시안 3D 압출 글자, 분홍 하트, 마젠타 림라이트" },
+        { "zone": "date_badge", "x": "4-18%, y 33-47%", "content": "23 SAB SEPT. / COVER 15€", "style": "둥근 사각 화이트 아웃라인, 23은 시안 대형" },
+        { "zone": "hero_visual", "y": "38-78%", "content": "네온 고글 여성 + 양측 3D 네온 번개 오브젝트" },
+        { "zone": "lineup", "y": "77-80%", "content": "DJ TINCHO ||| DJ EMBOOW ||| DJ A-KIID", "style": "볼드 컨덴스드, 시안/흰색 혼합" },
+        { "zone": "info", "y": "81-92%", "content": "SNS 핸들 / INFO SOLO POR WHATSAPP / 651 99 60 88 / 주소 / 웹사이트", "style": "전화번호 대형 볼드, 나머지 소형" },
+        { "zone": "sponsors", "y": "94-98%", "content": "Brugal, Johnnie Walker, Patrón, Dom Pérignon, Grey Goose, Belvedere", "style": "흰색 단색 로고 한 줄 정렬" }
+      ]
+    },
+    "hero_subject": {
+      "description": "AI풍 가상 인물. 금발 샤기 숏컷, 시안 LED 프레임 바이저 고글, 블랙 재킷 + 노란 스트라이프 어깨, 높은 옷깃.",
+      "pose": "정면에서 살짝 틀어진 3/4 구도, 시선 정면, 무표정 쿨한 톤",
+      "lighting": "시안 림라이트 + 핑크 필 라이트, 고글 반사광, 뒤쪽 파티클 안개",
+      "weakness_to_improve": ["얼굴 피부 질감 약간 플라스틱", "고글 반사에 디테일 부족", "어깨/재킷 경계 흐림"]
+    },
+    "typography": {
+      "hero": "3D 벤벨 압출, 시안 메탈릭 + 내부 하이라이트 + 마젠타 그림자",
+      "logo": "와이드 이탤릭 크롬, 상단 흰색 → 하단 회색 그라디언트",
+      "info": "그로테스크 산세리프 계열, 대문자, 넓은 자간",
+      "legibility_issues": ["하단 작은 글씨(주소/SNS) 대비 약함", "스폰서 로고 크기 불균형"]
+    },
+    "effects": ["방사형 네온 라이트 스트릭(대각선)", "퍼플 파티클/보케", "체인 렌즈 플레어", "글로우 블룸", "미세 필름 그레인"],
+    "must_keep_text_verbatim": [
+      "Vive Una nueva experiencia!", "LEVEL", "BARCELONA", "love LEVEL",
+      "23 SAB SEPT.", "COVER 15€",
+      "DJ TINCHO", "DJ EMBOOW", "DJ A-KIID",
+      "SÍGUENOS: @LEVELBARCELONA_OFICIAL  @BYAXELOFFICIAL",
+      "INFO SOLO POR WHATSAPP", "651 99 60 88",
+      "GRAN VÍA 770 - 772 BARCELONA EX SALA \"SAN PUES\"",
+      "WWW.LEVELBARCELONA.COM", "CUIDA TU IMAGEN"
+    ]
+  },
+  "improvements": [
+    "타이포 계층 재정리: 로고 > love LEVEL > 날짜 > 라인업 > 전화번호 > 기타",
+    "인물 피부/헤어/고글 반사 디테일 고해상도화, 얼굴이 타이틀과 겹치는 경계 정리",
+    "네온 번개 오브젝트에 튜브 네온 질감(유리관 + 내부 발광 + 바닥 반사) 추가",
+    "하단 정보 블록을 반투명 다크 패널 위에 배치해 가독성 확보",
+    "스폰서 로고 동일 높이/동일 간격 흰색 단색 처리",
+    "안전 여백(상하 4%, 좌우 5%) 확보로 스토리 UI 가림 방지",
+    "컬러 그레이딩: 하이라이트 시안, 섀도 딥퍼플, 미드톤 마젠타 유지하되 채도 클리핑 방지"
+  ],
+  "gpt_image_2": {
+    "usage": "원본 이미지를 reference로 첨부 → 아래 prompt 입력 → 텍스트 오류가 있으면 'edit' 모드로 해당 영역만 재요청",
+    "size": "1024x1792 이상 세로형",
+    "quality": "high",
+    "prompt": "Ultra-premium nightclub event poster, vertical 9:16, cyberpunk neon x Y2K chrome style, commercial agency quality. Background: deep violet to magenta-crimson gradient with diagonal neon light streaks radiating from center, soft purple particle haze, subtle film grain. TOP: small white thin sans-serif tagline \"Vive Una nueva experiencia!\", below it a wide italic chrome logo \"LEVEL\" with spaced small caps \"BARCELONA\". CENTER TITLE: huge glossy 3D extruded cyan metallic lettering \"love LEVEL\" with a pink glossy 3D heart on the left, magenta rim light, inner highlights, bevel, soft glow. LEFT: rounded-rectangle white outline date badge with huge cyan \"23\", white bold \"SAB\", small \"SEPT.\", cyan \"COVER 15€\" beneath. HERO: a stylish futuristic woman, messy platinum blonde short hair, cyan LED-frame visor goggles with detailed reflections, black techwear jacket with acid-yellow shoulder stripes and high collar, cool neutral expression, 3/4 view, cyan rim light plus pink fill, realistic skin texture, sharp detail. Two large symmetrical glass-tube neon lightning-bolt sculptures in cyan and pink on left and right edges with reflections and bloom. BOTTOM LINEUP: \"DJ TINCHO ||| DJ EMBOOW ||| DJ A-KIID\" bold condensed type, cyan and white. INFO BLOCK on a translucent dark panel: \"SÍGUENOS: @LEVELBARCELONA_OFICIAL @BYAXELOFFICIAL\", \"INFO SOLO POR WHATSAPP\", large bold white \"651 99 60 88\", \"GRAN VÍA 770 - 772 BARCELONA EX SALA \\\"SAN PUES\\\"\", \"WWW.LEVELBARCELONA.COM\", plus a small white t-shirt icon with a prohibition sign labeled \"CUIDA TU IMAGEN\". Bottom row: six white monochrome sponsor logos evenly spaced, equal height, matching the reference: Brugal, Johnnie Walker, Patrón Tequila, Dom Pérignon, Grey Goose Vodka, Belvedere Vodka. Render all text exactly as written, correct spelling and accents, razor-sharp edges, strong hierarchy, balanced composition, safe margins 5%. Cinematic color grading: cyan highlights, magenta midtones, deep violet shadows. 8k detail, no extra text, no watermark, no distorted letters, no extra fingers.",
+    "negative_prompt": "misspelled text, blurry letters, duplicated words, warped logos, plastic skin, extra limbs, cropped title, low contrast small text, oversaturated clipping, watermark"
+  },
+  "scoring_rubric": {
+    "scale": "각 항목 5점 만점, 목표 4.95 이상, 총점 목표 99.5/100",
+    "items": [
+      { "name": "타이포 정확도(철자/악센트)", "weight": 15, "check": "must_keep_text_verbatim 전부 일치" },
+      { "name": "정보 위계/가독성", "weight": 15, "check": "스토리 크기(작게 축소)에서도 날짜/전화번호 즉시 식별" },
+      { "name": "3D 타이틀 퀄리티", "weight": 15, "check": "벤벨, 광택, 그림자, 에지 무결점" },
+      { "name": "인물/고글 리얼리티", "weight": 15, "check": "피부결, 머리카락, 반사광, 손가락 등 아티팩트 없음" },
+      { "name": "컬러/라이팅 조화", "weight": 10, "check": "보색 대비 유지, 클리핑 없음" },
+      { "name": "네온 오브젝트/이펙트", "weight": 10, "check": "튜브 질감, 블룸 과다 없음" },
+      { "name": "구도/여백/균형", "weight": 10, "check": "중심축, 대칭, 안전 여백" },
+      { "name": "브랜드/스폰서 처리", "weight": 10, "check": "로고 일관성, 변형 없음" }
+    ]
+  }
+}
