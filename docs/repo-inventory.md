@@ -6,6 +6,7 @@
 | 스킬 | 위치 | 설명 |
 |---|---|---|
 | video-production-pipeline | `.claude/skills/video-production-pipeline/` (SKILL.md + references/cost-and-models.md, templates.md) | 기획→그리드 스토리보드 1장→480p 무음 테스트→승인 후 최종(오디오는 마지막)까지 크레딧·토큰을 아끼는 5단계 파이프라인. 트리거: "영상 만들어줘", "기획부터 영상까지", "스토리보드", "시댄스 영상". 본문 28줄, 세부는 references에서 필요 시 로딩 |
+| handoff-memory | `.claude/skills/handoff-memory/SKILL.md` | 새 세션에서 이전 작업 이어받기와 단계별 기록 규칙(HANDOFF.md 40줄 유지, job_key로 결과 복구, 커밋·푸시 필수). 트리거: "이어서", "저번에 하던", "기록해줘" |
 | eli5 | `.claude/skills/eli5/` (원본 그대로 + LICENSE + SOURCE.md) | 어떤 주제·코드·에러든 상대(5살, 초등학생, 부모님, 상사 등)의 눈높이에 맞춰 쉬운 비유로 설명. 트리거: "ELI5", "쉽게 설명해줘", "초등학생 수준으로". 출처 DreambigOu/ELI5(MIT) |
 | commercial-motion-prompt | `.claude/skills/commercial-motion-prompt/SKILL.md` (원본 브랜치 `claude/ai-motion-graphic-prompt-guide-cd1bld`, 2026-09-27) | AI 영상 모델(Sora, Veo, Runway, Kling 등)용 상업 모션그래픽·광고 영상 프롬프트 작성. 트리거: "광고 영상 프롬프트", "모션그래픽 프롬프트", "커머셜 영상 프롬프트". 본문 약 22KB, 길이·Creative Mode 결정 후 완성 프롬프트 1개 생성 |
 

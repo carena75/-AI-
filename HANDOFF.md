@@ -1,17 +1,26 @@
-# HANDOFF
+# HANDOFF — 새 세션이 가장 먼저 읽는 요약
+규칙: 40줄 이내 유지. 오래된 내용은 `docs/history/`로 옮긴다. 비밀키·토큰은 적지 않는다.
 
-## 2026-10-02~03 모션그래픽 샘플 (Liquid Chrome → Particle Light)
-- 컨셉: 은색 물방울 → 유리 파편이 크롬 토러스 매듭으로 조립 → 주황 입자와 빛의 조리개. 12초, 3컷(4초씩), 16:9, 480p
-- 최종 영상(오디오 포함, Seedance V1.5 Pro T2V): https://cdn.abocado.ai/ai/video/google_8856089c/mcp_google_8856089c_20261003001240_59ne9e_0.mp4
-- 그리드 스토리보드(6패널 한 장): https://cdn.abocado.ai/ai/image/google_8856089c/mcp_google_8856089c_20261003001242_c5rdu2_0.jpg
-- 영상 소리와 화면은 직접 보지 못함 → **시각·청각 검수 미확인**
-- 크레딧: 시작 20,185 → 18,956. 낭비분: 낱장 프레임 4+1장(255), 이어붙이기 컷 3개(462, 최종본으로 대체됨)
+## 지금 상태 (2026-10-04)
+- 진행 중 프로젝트: 없음. 직전 완료: 12초 모션그래픽 샘플(Liquid Chrome → Particle Light)
+- 대기: PC 백업 저장소 `carena75/claude-skills-backup`(비공개) 푸시 확인 → 힉스필드 스킬을 `.claude/skills/`로 이전. **플레이리스트 계열은 구매품이라 제외**
+- 사용자 목표: 힉스필드 스킬을 종목별 상품(상세페이지, UGC·쇼츠 광고, 웨딩 영상 등)으로 완성해 수익화. 완성 기준 = 아보카도에서 가장 싼 단계로 실제 테스트 통과
+- PC의 Claude Code는 별개 환경(`~\Downloads\클로드코드\skills-backup`). 이 클라우드 세션은 PC 파일을 못 읽는다
 
-## 교훈
-- 스토리보드는 낱장 말고 그리드 한 장. 견적은 options 포함. (CLAUDE.md 참고)
-- 힉스필드 스킬 본문 40여 개는 이 저장소에 아직 없음(색인만 `docs/production-skill-guide.md`). 본문은 사용자 PC `~/.claude`에 있음.
+## 최근 결과 (job_key로 재조회 가능: `abocado_get_job_status`, 재결제 불필요)
+- 12초 영상(Seedance 1.5 T2V, 480p, 오디오 포함): `mcp_google_8856089c_20261003001240_59ne9e`
+- 그리드 스토리보드(6패널 1장): `mcp_google_8856089c_20261003001242_c5rdu2`
+- 화면·소리 직접 검수는 못 함(시각·청각 검수 미확인)
 
-## 스킬 이전 (2026-10-04)
-- 스킬 본문(~583 md)은 사용자 PC `~/.claude/skills`에만 있음. 클라우드에서는 접근 불가.
-- PC에서 `bash scripts/export-skills-to-repo.sh` 실행 → `.claude/skills`, `.claude/hooks`, `.claude/global-CLAUDE.md`로 복사 후 푸시 (playlist 계열·synced·Anthropic 기본 스킬 제외, 비밀키 검사 포함)
-- 푸시 후 할 일: `.claude/global-CLAUDE.md`의 라우팅 표를 검토해 `CLAUDE.md`에 연결, 새 세션에서 스킬 자동 로딩 확인
+## 저장소에 있는 스킬
+`video-production-pipeline`(기획→스토리보드 1장→480p 테스트→최종→확인), `handoff-memory`(이어받기·기록), `commercial-motion-prompt`, `eli5`. 목록은 `docs/repo-inventory.md`
+
+## 비용 교훈
+- 견적에 `generate_audio` 등 옵션을 넣어야 실차감과 맞는다(오디오 켜면 영상 약 2배)
+- 스토리보드는 낱장 말고 그리드 1장. 컷별 영상 이어붙이기 대신 전체 길이 1회 생성
+- 상세 가격·모델: `.claude/skills/video-production-pipeline/references/cost-and-models.md`
+
+## 이 환경 제약
+- `cdn.abocado.ai` 다운로드가 막혀 영상 파일 검사·병합 불가. 소리 검수 불가
+- 이 저장소는 **공개**다. 제품 프리셋·구매품·키는 올리지 않는다
+- 보관 기록: `docs/history/`
