@@ -13,8 +13,7 @@ description: 스킬을 저장·추가·정리하거나 목록을 확인하고 �
 3. 등록: `python3 scripts/skills.py add <폴더> --provider hix-ai|higgsfield|third-party|own --category <종류> --source "<출처>" --public-ok true|false|unverified`
    - 기본은 보관(토큰 0). 자주 쓰는 것만 `--active` 또는 `activate`.
 4. `python3 scripts/skills.py check` 로 점검(비밀키, description 길이, 메타 누락).
-5. 커밋·푸시는 **Stop 훅(`scripts/auto-save.sh`)이 세션 종료 때 자동**으로 한다. 점검에 걸리면 커밋되지 않으니 걸린 이유를 사용자에게 알린다. 급하면 직접 커밋·푸시해도 된다.
-   **`public-ok`가 true가 아닌 스킬은 공개 저장소(`-AI-`)에 올라가지 않는다.** 비공개 백업 저장소가 연결돼 있지 않으면 저장하지 말고 사용자에게 알린다. 비공개 저장소에서는 `.claude/autosave-visibility`를 `private`으로 둔다.
+5. 저장은 **비공개 저장소에서만** 한다. 공개 저장소이거나 비공개 여부를 확인할 수 없으면 저장하지 말고 사용자에게 알린다(절대 규칙). 비공개 저장소에서는 `.claude/autosave-visibility`를 `private`으로 두면 Stop 훅(`scripts/auto-save.sh`)이 세션 종료 때 점검 후 자동 커밋·푸시한다. 훅은 GitHub가 공개라고 답하면 설정과 무관하게 거부한다. 점검에 걸리면 이유를 알린다.
 
 ## 목록·상태 확인
 `docs/skill-index.md`를 읽어 사용중/보관, 종류, 출처, 공개 가능 여부를 요약한다. 갱신은 `python3 scripts/skills.py index`.
