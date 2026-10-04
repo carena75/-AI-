@@ -5,7 +5,7 @@
 ## 스킬 (SKILL.md) — 자동 로딩 대상
 | 스킬 | 위치 | 설명 |
 |---|---|---|
-| video-production-pipeline | `.claude/skills/video-production-pipeline/` (SKILL.md + references/cost-and-models.md, templates.md) | 기획→그리드 스토리보드 1장→480p 무음 테스트→승인 후 최종(오디오는 마지막)까지 크레딧·토큰을 아끼는 5단계 파이프라인. 트리거: "영상 만들어줘", "기획부터 영상까지", "스토리보드", "시댄스 영상". 본문 약 40줄, 세부는 references에서 필요 시 로딩 |
+| video-production-pipeline | `.claude/skills/video-production-pipeline/` (SKILL.md + references/cost-and-models.md, templates.md) | 기획→그리드 스토리보드 1장→480p 무음 테스트→승인 후 최종(오디오는 마지막)까지 크레딧·토큰을 아끼는 5단계 파이프라인. 트리거: "영상 만들어줘", "기획부터 영상까지", "스토리보드", "시댄스 영상". 본문 28줄, 세부는 references에서 필요 시 로딩 |
 | commercial-motion-prompt | `.claude/skills/commercial-motion-prompt/SKILL.md` (원본 브랜치 `claude/ai-motion-graphic-prompt-guide-cd1bld`, 2026-09-27) | AI 영상 모델(Sora, Veo, Runway, Kling 등)용 상업 모션그래픽·광고 영상 프롬프트 작성. 트리거: "광고 영상 프롬프트", "모션그래픽 프롬프트", "커머셜 영상 프롬프트". 본문 약 22KB, 길이·Creative Mode 결정 후 완성 프롬프트 1개 생성 |
 
 ## 데이터·참고 파일 (스킬 아님) — 브랜치에 그대로 남겨둠
