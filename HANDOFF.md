@@ -10,3 +10,8 @@
 ## 교훈
 - 스토리보드는 낱장 말고 그리드 한 장. 견적은 options 포함. (CLAUDE.md 참고)
 - 힉스필드 스킬 본문 40여 개는 이 저장소에 아직 없음(색인만 `docs/production-skill-guide.md`). 본문은 사용자 PC `~/.claude`에 있음.
+
+## 스킬 이전 (2026-10-04)
+- 스킬 본문(~583 md)은 사용자 PC `~/.claude/skills`에만 있음. 클라우드에서는 접근 불가.
+- PC에서 `bash scripts/export-skills-to-repo.sh` 실행 → `.claude/skills`, `.claude/hooks`, `.claude/global-CLAUDE.md`로 복사 후 푸시 (playlist 계열·synced·Anthropic 기본 스킬 제외, 비밀키 검사 포함)
+- 푸시 후 할 일: `.claude/global-CLAUDE.md`의 라우팅 표를 검토해 `CLAUDE.md`에 연결, 새 세션에서 스킬 자동 로딩 확인
