@@ -12,8 +12,11 @@
 - 그리드 스토리보드(6패널 1장): `mcp_google_8856089c_20261003001242_c5rdu2`
 - 화면·소리 직접 검수는 못 함(시각·청각 검수 미확인)
 
-## 저장소에 있는 스킬
-`video-production-pipeline`(기획→스토리보드 1장→480p 테스트→최종→확인), `handoff-memory`(이어받기·기록), `commercial-motion-prompt`, `eli5`. 목록은 `docs/repo-inventory.md`
+## 스킬 저장 구조 (결정 2026-10-04)
+- 사용중 = `.claude/skills/<이름>/`(평평, 자동 로딩, description만 토큰), 보관 = `library/<출처>/<종류>/<이름>/`(토큰 0). 출처: higgsfield, hix-ai, third-party, own
+- 목록·상태: `docs/skill-index.md`(자동 생성), 메타: `skills.json`, 관리: `python3 scripts/skills.py` + 스킬 `skill-library`
+- 이 저장소(-AI-)는 **공개**: `public_ok=true`만 둔다. 힉스필드·HIX AI 본문은 **비공개 저장소**에 저장(아직 미연결)
+- 확인 필요: `commercial-motion-prompt`는 남이 공유한 가이드에서 만든 듯해 공개 허락 미확인
 
 ## 비용 교훈
 - 견적에 `generate_audio` 등 옵션을 넣어야 실차감과 맞는다(오디오 켜면 영상 약 2배)
