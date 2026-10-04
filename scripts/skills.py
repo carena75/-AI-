@@ -5,7 +5,7 @@
   python3 scripts/skills.py add <폴더> --provider hix-ai --category writing [--active]
   python3 scripts/skills.py activate <이름>     # library -> .claude/skills (자동 로딩, 토큰 소비)
   python3 scripts/skills.py archive <이름>      # .claude/skills -> library (로딩 안 됨, 토큰 0)
-  python3 scripts/skills.py check
+  python3 scripts/skills.py check [--visibility public|private] [--changed-only]
 
 구조: 사용 중 = .claude/skills/<이름>/ (평평해야 자동 발견됨), 보관 = library/<출처>/<종류>/<이름>/
 메타데이터(출처·종류·라이선스·공개 가능 여부) = skills.json
@@ -130,22 +130,49 @@ def cmd_move(name, to_active):
     cmd_index()
 
 
-def cmd_check():
+def changed_paths():
+    """git 상태에서 바뀐 파일 목록과 그 안의 스킬 이름."""
+    import subprocess
+    out = subprocess.run(["git", "-c", "core.quotepath=false", "status", "--porcelain", "-uall"], cwd=ROOT,
+                         capture_output=True, text=True).stdout
+    files, names = [], set()
+    for line in out.splitlines():
+        path = line[3:].strip().strip('"')
+        if " -> " in path:
+            path = path.split(" -> ")[-1]
+        files.append(ROOT / path)
+        parts = Path(path).parts
+        if len(parts) >= 4 and parts[0] == ".claude" and parts[1] == "skills":
+            names.add(parts[2])
+        elif len(parts) >= 5 and parts[0] == "library":
+            names.add(parts[3])
+    return files, names
+
+
+def cmd_check(visibility=None, changed_only=False):
+    """문제(커밋 막아야 하는 것)는 '!', 참고는 '·'. changed_only면 바뀐 스킬·파일만 검사."""
     m = load()["skills"]
+    files, names = changed_paths() if changed_only else ([], set())
     bad = 0
     for r in scan():
+        if changed_only and r["name"] not in names:
+            continue
         meta = m.get(r["name"])
         if not meta:
-            print(f"! 메타 없음: {r['name']}"); bad += 1
-        if r["status"] == "사용중" and len(r["desc"]) > 400:
-            print(f"! description 길다({len(r['desc'])}자, 토큰 부담): {r['name']}"); bad += 1
+            print(f"! 메타 없음(skills.json 등록 필요): {r['name']}"); bad += 1
         if not r["desc"]:
             print(f"! description 없음(자동 로딩 불가): {r['name']}"); bad += 1
+        if r["status"] == "사용중" and len(r["desc"]) > 400:
+            print(f"· description 김({len(r['desc'])}자, 토큰 부담): {r['name']}")
         if meta and meta.get("public_ok") is not True:
-            print(f"· 공개 저장소 주의({meta.get('public_ok')}): {r['name']}")
-        for p in r["dir"].rglob("*"):
-            if p.is_file() and SECRET.search(p.read_text(encoding="utf-8", errors="ignore")):
-                print(f"! 비밀키 의심: {p.relative_to(ROOT)}"); bad += 1
+            if visibility == "public":
+                print(f"! 공개 저장소에 올릴 수 없음(public_ok={meta.get('public_ok')}): {r['name']}"); bad += 1
+            else:
+                print(f"· 공개 저장소 주의({meta.get('public_ok')}): {r['name']}")
+    targets = [f for f in files if f.is_file()] if changed_only else [p for r in scan() for p in r["dir"].rglob("*") if p.is_file()]
+    for p in targets:
+        if SECRET.search(p.read_text(encoding="utf-8", errors="ignore")):
+            print(f"! 비밀키 의심: {p.relative_to(ROOT)}"); bad += 1
     print("check 완료" + (f": 문제 {bad}건" if bad else ": 문제 없음"))
     return 1 if bad else 0
 
@@ -153,7 +180,8 @@ def cmd_check():
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     sp = ap.add_subparsers(dest="cmd", required=True)
-    sp.add_parser("index"); sp.add_parser("check")
+    sp.add_parser("index")
+    c = sp.add_parser("check"); c.add_argument("--visibility", choices=["public", "private"]); c.add_argument("--changed-only", action="store_true")
     p = sp.add_parser("add"); p.add_argument("folder"); p.add_argument("--provider", required=True)
     p.add_argument("--category", required=True); p.add_argument("--source"); p.add_argument("--license")
     p.add_argument("--public-ok", default="unverified", choices=["true", "false", "unverified"])
@@ -163,5 +191,5 @@ if __name__ == "__main__":
     a = ap.parse_args()
     if a.cmd == "add":
         a.public_ok = {"true": True, "false": False}.get(a.public_ok, "unverified")
-    {"index": cmd_index, "check": lambda: sys.exit(cmd_check()), "add": lambda: cmd_add(a),
+    {"index": cmd_index, "check": lambda: sys.exit(cmd_check(a.visibility, a.changed_only)), "add": lambda: cmd_add(a),
      "activate": lambda: cmd_move(a.name, True), "archive": lambda: cmd_move(a.name, False)}[a.cmd]()

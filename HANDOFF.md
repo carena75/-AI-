@@ -16,6 +16,7 @@
 - 사용중 = `.claude/skills/<이름>/`(평평, 자동 로딩, description만 토큰), 보관 = `library/<출처>/<종류>/<이름>/`(토큰 0). 출처: higgsfield, hix-ai, third-party, own
 - 목록·상태: `docs/skill-index.md`(자동 생성), 메타: `skills.json`, 관리: `python3 scripts/skills.py` + 스킬 `skill-library`
 - 이 저장소(-AI-)는 **공개**: `public_ok=true`만 둔다. 힉스필드·HIX AI 본문은 **비공개 저장소**에 저장(아직 미연결)
+- 자동 저장: Stop 훅 `scripts/auto-save.sh`(점검→목록 갱신→커밋→푸시, 공개 저장소는 public_ok=true만, main 건너뜀). **새 세션에서 훅이 실제로 도는지 확인 필요**
 - 확인 필요: `commercial-motion-prompt`는 남이 공유한 가이드에서 만든 듯해 공개 허락 미확인
 
 ## 비용 교훈
